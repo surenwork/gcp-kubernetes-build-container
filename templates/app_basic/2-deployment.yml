@@ -1,0 +1,58 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: $APP_NAME-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: $APP_NAME-deployment
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+          "-n=/etc/nginx/custom/nginx.conf",
+          "--service=$HOST_NAME",
+          "--rollout_strategy=managed",
+        ]
+        ports:
+          - containerPort: 8080
+          - containerPort: 443
+        volumeMounts:
+          - mountPath: /etc/nginx/ssl
+            name: $APP_NAME-tls
+            readOnly: true
+          - mountPath: /etc/nginx/custom
+            name: nginx-config
+            readOnly: true
+          # [END secret-2]
+      - name: $APP_NAME
+        image: $DOCKER_IMG_PATH
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 500M
+        envFrom:
+        - configMapRef:
+            name: $APP_NAME-config
+        command: ["node"]
+        args: ["./index.js"]
+        ports:
+          - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: $APP_NAME-tls
+          secret:
+            secretName: $APP_NAME-tls
