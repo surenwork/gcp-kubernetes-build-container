@@ -1,0 +1,40 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ngk-certification-deployment
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: ngk-certification-deployment
+        role: master
+        tier: backend
+    spec:
+      containers:
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+           "--http_port", "8080",
+           "--backend", "127.0.0.1:3000",
+           "--service", "$HOST_NAME",
+           "--rollout_strategy", "managed"
+        ]
+        ports:
+          - containerPort: 8080
+      - name: ngk-certification
+        image: surenwork/ngk-support:ngk-certificate-service
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: 100M
+        command: ["node"]
+        args: ["./index.js"]
+        ports:
+          - containerPort: 3000
+        readinessProbe:
+          httpGet:
+            path: /healthcheck
+            port: 3000
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
