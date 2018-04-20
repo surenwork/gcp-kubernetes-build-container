@@ -10,9 +10,15 @@ gcloud config set compute/zone $GCLOUD_ZONE
 gcloud container clusters get-credentials $GCLOUD_KUBE_CLUSTER
 gcloud container clusters update $GCLOUD_KUBE_CLUSTER --no-enable-legacy-authorization
 
-sed -i 's|$APP_PORT|'"$APP_PORT"'|' ~/.nginx.conf
+set +e
+echo "Creating required core config maps and secrets"
+sed -i 's|$APP_PORT|'"$APP_PORT"'|' ~/nginx.conf
+kubectl delete configmap nginx-config
 kubectl create configmap nginx-config --from-file=~/nginx.conf
+
+kubectl delete secret generic service-account-creds
 kubectl create secret generic service-account-creds --from-file=${HOME}/gcloud-service-key.json
+set -e
 
 echo "Setup complete, Please see the details below"
 gcloud config list

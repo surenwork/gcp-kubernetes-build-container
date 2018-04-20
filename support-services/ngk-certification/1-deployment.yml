@@ -22,8 +22,8 @@ spec:
            "--http_port", "8080",
            "--backend", "127.0.0.1:3000",
            "--service", "$HOST_NAME",
-           "--rollout_strategy", "managed"
-           "--service_account_key", "/etc/nginx/creds/service-account-creds.json",
+           "--rollout_strategy", "managed",
+           "--service_account_key", "/etc/nginx/creds/service-account-creds.json"
         ]
         ports:
           - containerPort: 8080
