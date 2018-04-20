@@ -11,6 +11,10 @@ spec:
         role: master
         tier: backend
     spec:
+      volumes:
+        - name: service-account-creds
+          secret:
+            secretName: service-account-creds
       containers:
       - name: esp
         image: gcr.io/endpoints-release/endpoints-runtime:1
@@ -19,9 +23,14 @@ spec:
            "--backend", "127.0.0.1:3000",
            "--service", "$HOST_NAME",
            "--rollout_strategy", "managed"
+           "--service_account_key", "/etc/nginx/creds/service-account-creds.json",
         ]
         ports:
           - containerPort: 8080
+        volumeMounts:
+          - mountPath: /etc/nginx/creds
+            name: service-account-creds
+            readOnly: true
       - name: ngk-certification
         image: surenwork/ngk-support:ngk-certificate-service
         imagePullPolicy: Always
