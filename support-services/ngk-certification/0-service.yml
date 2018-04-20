@@ -8,6 +8,7 @@ metadata:
     tier: backend
 spec:
   type: LoadBalancer
+  loadBalancerIP: $SERVER_IP
   selector:
     app: ngk-certification-deployment
     role: master

@@ -29,3 +29,6 @@ ENDPOINT_CONFIG_ID=$(gcloud endpoints configs list --service=$HOST_NAME --limit=
 echo "Updating enviornment variables"
 echo "SERVER_IP=$SERVER_IP" >> ~/.build_env
 echo "ENDPOINT_CONFIG_ID=$ENDPOINT_CONFIG_ID" >> ~/.build_env
+
+echo "Updated .build_env"
+cat ~/.build_env
