@@ -17,7 +17,6 @@ set -e
 
 # Deploy the service
 echo "Creating service for ngk-certification"
-kubectl create -f ~/support-services/ngk-certification/0-service.yml
 cat ~/support-services/ngk-certification/0-service.yml | sed 's|$SERVER_IP|'"$SERVER_IP"'|' | kubectl create -f -
 
 # Deploy the pod
