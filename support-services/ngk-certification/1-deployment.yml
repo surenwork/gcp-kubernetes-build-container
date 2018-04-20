@@ -23,7 +23,7 @@ spec:
            "--backend", "127.0.0.1:3000",
            "--service", "$HOST_NAME",
            "--rollout_strategy", "managed",
-           "--service_account_key", "/etc/nginx/creds/service-account-creds.json"
+           "--service_account_key", "/etc/nginx/creds/gcloud-service-key.json"
         ]
         ports:
           - containerPort: 8080
